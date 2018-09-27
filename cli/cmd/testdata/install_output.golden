@@ -14,10 +14,11 @@ metadata:
 
 ### Controller RBAC ###
 ---
-kind: ClusterRole
+kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: linkerd-Namespace-controller
+  namespace: Namespace
 rules:
 - apiGroups: ["extensions", "apps"]
   resources: ["deployments", "replicasets"]
@@ -27,13 +28,14 @@ rules:
   verbs: ["list", "get", "watch"]
 
 ---
-kind: ClusterRoleBinding
+kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: linkerd-Namespace-controller
+  namespace: Namespace
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: linkerd-Namespace-controller
 subjects:
 - kind: ServiceAccount
@@ -50,23 +52,25 @@ metadata:
 
 ### Prometheus RBAC ###
 ---
-kind: ClusterRole
+kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: linkerd-Namespace-prometheus
+  namespace: Namespace
 rules:
 - apiGroups: [""]
   resources: ["pods"]
   verbs: ["get", "list", "watch"]
 
 ---
-kind: ClusterRoleBinding
+kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: linkerd-Namespace-prometheus
+  namespace: Namespace
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: linkerd-Namespace-prometheus
 subjects:
 - kind: ServiceAccount
@@ -143,6 +147,7 @@ spec:
         - public-api
         - -prometheus-url=http://prometheus.Namespace.svc.cluster.local:9090
         - -controller-namespace=Namespace
+        - -single-namespace=true
         - -log-level=ControllerLogLevel
         image: ControllerImage
         imagePullPolicy: ImagePullPolicy
@@ -165,6 +170,8 @@ spec:
         resources: {}
       - args:
         - destination
+        - -controller-namespace=Namespace
+        - -single-namespace=true
         - -enable-tls=true
         - -log-level=ControllerLogLevel
         image: ControllerImage
@@ -211,8 +218,9 @@ spec:
         resources: {}
       - args:
         - tap
-        - -log-level=ControllerLogLevel
         - -controller-namespace=Namespace
+        - -single-namespace=true
+        - -log-level=ControllerLogLevel
         image: ControllerImage
         imagePullPolicy: ImagePullPolicy
         livenessProbe:
@@ -624,6 +632,8 @@ data:
     - job_name: 'linkerd-proxy'
       kubernetes_sd_configs:
       - role: pod
+        namespaces:
+          names: ['Namespace']
       relabel_configs:
       - source_labels:
         - __meta_kubernetes_pod_container_name
@@ -866,10 +876,11 @@ metadata:
 
 ### CA RBAC ###
 ---
-kind: ClusterRole
+kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: linkerd-Namespace-ca
+  namespace: Namespace
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
@@ -889,13 +900,14 @@ rules:
   verbs: ["create", "update"]
 
 ---
-kind: ClusterRoleBinding
+kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: linkerd-Namespace-ca
+  namespace: Namespace
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: linkerd-Namespace-ca
 subjects:
 - kind: ServiceAccount
@@ -933,6 +945,7 @@ spec:
       - args:
         - ca
         - -controller-namespace=Namespace
+        - -single-namespace=true
         - -log-level=ControllerLogLevel
         image: ControllerImage
         imagePullPolicy: ImagePullPolicy

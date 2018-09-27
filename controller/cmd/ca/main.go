@@ -16,6 +16,7 @@ import (
 func main() {
 	metricsAddr := flag.String("metrics-addr", ":9997", "address to serve scrapable metrics on")
 	controllerNamespace := flag.String("controller-namespace", "linkerd", "namespace in which Linkerd is installed")
+	singleNamespace := flag.Bool("single-namespace", false, "only operate in the controller namespace")
 	kubeConfigPath := flag.String("kubeconfig", "", "path to kube config")
 	flags.ConfigureAndParse()
 
@@ -26,8 +27,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	restrictToNamespace := ""
+	if *singleNamespace {
+		restrictToNamespace = *controllerNamespace
+	}
 	k8sAPI := k8s.NewAPI(
 		k8sClient,
+		restrictToNamespace,
 		k8s.Pod,
 		k8s.RS,
 	)

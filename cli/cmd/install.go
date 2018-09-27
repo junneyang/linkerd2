@@ -34,6 +34,7 @@ type installConfig struct {
 	EnableTLS                   bool
 	TLSTrustAnchorConfigMapName string
 	ProxyContainerName          string
+	SingleNamespace             bool
 }
 
 type installOptions struct {
@@ -41,6 +42,7 @@ type installOptions struct {
 	webReplicas        uint
 	prometheusReplicas uint
 	controllerLogLevel string
+	singleNamespace    bool
 	*proxyConfigOptions
 }
 
@@ -52,6 +54,7 @@ func newInstallOptions() *installOptions {
 		webReplicas:        1,
 		prometheusReplicas: 1,
 		controllerLogLevel: "info",
+		singleNamespace:    false,
 		proxyConfigOptions: newProxyConfigOptions(),
 	}
 }
@@ -78,6 +81,7 @@ func newCmdInstall() *cobra.Command {
 	cmd.PersistentFlags().UintVar(&options.webReplicas, "web-replicas", options.webReplicas, "Replicas of the web server to deploy")
 	cmd.PersistentFlags().UintVar(&options.prometheusReplicas, "prometheus-replicas", options.prometheusReplicas, "Replicas of prometheus to deploy")
 	cmd.PersistentFlags().StringVar(&options.controllerLogLevel, "controller-log-level", options.controllerLogLevel, "Log level for the controller and web components")
+	cmd.PersistentFlags().BoolVar(&options.singleNamespace, "single-namespace", options.singleNamespace, "Configure the control plane to only operate in the installed namespace")
 
 	return cmd
 }
@@ -105,6 +109,7 @@ func validateAndBuildConfig(options *installOptions) (*installConfig, error) {
 		EnableTLS:                   options.enableTLS(),
 		TLSTrustAnchorConfigMapName: k8s.TLSTrustAnchorConfigMapName,
 		ProxyContainerName:          k8s.ProxyContainerName,
+		SingleNamespace:             options.singleNamespace,
 	}, nil
 }
 
