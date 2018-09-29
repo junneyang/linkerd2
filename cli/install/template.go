@@ -20,8 +20,12 @@ metadata:
 kind: {{if not .SingleNamespace}}Cluster{{end}}Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: linkerd-{{.Namespace}}-controller{{if .SingleNamespace}}
-  namespace: {{.Namespace}}{{end}}
+  {{- if .SingleNamespace}}
+  name: linkerd-controller
+  namespace: {{.Namespace}}
+  {{- else}}
+  name: linkerd-{{.Namespace}}-controller
+  {{- end}}
 rules:
 - apiGroups: ["extensions", "apps"]
   resources: ["deployments", "replicasets"]
@@ -34,12 +38,21 @@ rules:
 kind: {{if not .SingleNamespace}}Cluster{{end}}RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: linkerd-{{.Namespace}}-controller{{if .SingleNamespace}}
-  namespace: {{.Namespace}}{{end}}
+  {{- if .SingleNamespace}}
+  name: linkerd-controller
+  namespace: {{.Namespace}}
+  {{- else}}
+  name: linkerd-{{.Namespace}}-controller
+  {{- end}}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: {{if not .SingleNamespace}}Cluster{{end}}Role
+  {{- if .SingleNamespace}}
+  kind: Role
+  name: linkerd-controller
+  {{- else}}
+  kind: ClusterRole
   name: linkerd-{{.Namespace}}-controller
+  {{- end}}
 subjects:
 - kind: ServiceAccount
   name: linkerd-controller
@@ -58,8 +71,12 @@ metadata:
 kind: {{if not .SingleNamespace}}Cluster{{end}}Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: linkerd-{{.Namespace}}-prometheus{{if .SingleNamespace}}
-  namespace: {{.Namespace}}{{end}}
+  {{- if .SingleNamespace}}
+  name: linkerd-prometheus
+  namespace: {{.Namespace}}
+  {{- else}}
+  name: linkerd-{{.Namespace}}-prometheus
+  {{- end}}
 rules:
 - apiGroups: [""]
   resources: ["pods"]
@@ -69,12 +86,21 @@ rules:
 kind: {{if not .SingleNamespace}}Cluster{{end}}RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: linkerd-{{.Namespace}}-prometheus{{if .SingleNamespace}}
-  namespace: {{.Namespace}}{{end}}
+  {{- if .SingleNamespace}}
+  name: linkerd-prometheus
+  namespace: {{.Namespace}}
+  {{- else}}
+  name: linkerd-{{.Namespace}}-prometheus
+  {{- end}}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: {{if not .SingleNamespace}}Cluster{{end}}Role
+  {{- if .SingleNamespace}}
+  kind: Role
+  name: linkerd-prometheus
+  {{- else}}
+  kind: ClusterRole
   name: linkerd-{{.Namespace}}-prometheus
+  {{- end}}
 subjects:
 - kind: ServiceAccount
   name: linkerd-prometheus
@@ -424,9 +450,11 @@ data:
 
     - job_name: 'linkerd-proxy'
       kubernetes_sd_configs:
-      - role: pod{{ if .SingleNamespace }}
+      - role: pod
+        {{- if .SingleNamespace}}
         namespaces:
-          names: ['{{.Namespace}}']{{ end }}
+          names: ['{{.Namespace}}']
+        {{- end}}
       relabel_configs:
       - source_labels:
         - __meta_kubernetes_pod_container_name
@@ -605,8 +633,12 @@ metadata:
 kind: {{if not .SingleNamespace}}Cluster{{end}}Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: linkerd-{{.Namespace}}-ca{{if .SingleNamespace}}
-  namespace: {{.Namespace}}{{end}}
+  {{- if .SingleNamespace}}
+  name: linkerd-ca
+  namespace: {{.Namespace}}
+  {{- else}}
+  name: linkerd-{{.Namespace}}-ca
+  {{- end}}
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
@@ -629,12 +661,21 @@ rules:
 kind: {{if not .SingleNamespace}}Cluster{{end}}RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: linkerd-{{.Namespace}}-ca{{if .SingleNamespace}}
-  namespace: {{.Namespace}}{{end}}
+  {{- if .SingleNamespace}}
+  name: linkerd-ca
+  namespace: {{.Namespace}}
+  {{- else}}
+  name: linkerd-{{.Namespace}}-ca
+  {{- end}}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: {{if not .SingleNamespace}}Cluster{{end}}Role
+  {{- if .SingleNamespace}}
+  kind: Role
+  name: linkerd-ca
+  {{- else}}
+  kind: ClusterRole
   name: linkerd-{{.Namespace}}-ca
+  {{- end}}
 subjects:
 - kind: ServiceAccount
   name: linkerd-ca
