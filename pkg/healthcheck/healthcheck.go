@@ -592,7 +592,9 @@ func validateControlPlanePods(pods []v1.Pod) error {
 
 	for _, pod := range pods {
 		if pod.Status.Phase == v1.PodRunning {
-			name := strings.Split(pod.Name, "-")[0]
+			// strip the single-namespace "linkerd-" prefix if it exists
+			name := strings.TrimPrefix(pod.Name, "linkerd-")
+			name = strings.Split(name, "-")[0]
 			if _, found := statuses[name]; !found {
 				statuses[name] = make([]v1.ContainerStatus, 0)
 			}

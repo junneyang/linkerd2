@@ -28,8 +28,6 @@ const (
 	// LocalhostDNSNameOverride allows override of the controlPlaneDNS. This
 	// must be in absolute form for the proxy to special-case it.
 	LocalhostDNSNameOverride = "localhost."
-	// ControlPlanePodName default control plane pod name.
-	ControlPlanePodName = "controller"
 	// The name of the variable used to pass the pod's namespace.
 	PodNamespaceEnvVarName = "LINKERD2_PROXY_POD_NAMESPACE"
 
@@ -45,6 +43,7 @@ type injectOptions struct {
 	outboundPort        uint
 	ignoreInboundPorts  []uint
 	ignoreOutboundPorts []uint
+	controllerName      string
 	*proxyConfigOptions
 }
 
@@ -227,7 +226,7 @@ func injectPodSpec(t *v1.PodSpec, identity k8s.TLSIdentity, controlPlaneDNSNameO
 		Image:                    options.taggedProxyInitImage(),
 		ImagePullPolicy:          v1.PullPolicy(options.imagePullPolicy),
 		TerminationMessagePolicy: v1.TerminationMessageFallbackToLogsOnError,
-		Args:                     initArgs,
+		Args: initArgs,
 		SecurityContext: &v1.SecurityContext{
 			Capabilities: &v1.Capabilities{
 				Add: []v1.Capability{v1.Capability("NET_ADMIN")},
@@ -476,7 +475,7 @@ func injectResource(bytes []byte, options *injectOptions, report *injectReport) 
 			return nil, err
 		}
 
-		if deployment.Name == ControlPlanePodName && deployment.Namespace == controlPlaneNamespace {
+		if deployment.Name == options.controllerName && deployment.Namespace == controlPlaneNamespace {
 			DNSNameOverride = LocalhostDNSNameOverride
 		}
 

@@ -125,7 +125,7 @@ metadata:
   creationTimestamp: null
   labels:
     ControllerComponentLabel: controller
-  name: controller
+  name: prefix-controller
   namespace: Namespace
 spec:
   replicas: 1
@@ -140,7 +140,7 @@ spec:
       labels:
         ControllerComponentLabel: controller
         linkerd.io/control-plane-ns: Namespace
-        linkerd.io/proxy-deployment: controller
+        linkerd.io/proxy-deployment: prefix-controller
     spec:
       containers:
       - args:
@@ -334,7 +334,7 @@ metadata:
   creationTimestamp: null
   labels:
     ControllerComponentLabel: web
-  name: web
+  name: prefix-web
   namespace: Namespace
 spec:
   replicas: 2
@@ -349,7 +349,7 @@ spec:
       labels:
         ControllerComponentLabel: web
         linkerd.io/control-plane-ns: Namespace
-        linkerd.io/proxy-deployment: web
+        linkerd.io/proxy-deployment: prefix-web
     spec:
       containers:
       - args:
@@ -468,7 +468,7 @@ metadata:
   creationTimestamp: null
   labels:
     ControllerComponentLabel: prometheus
-  name: prometheus
+  name: prefix-prometheus
   namespace: Namespace
 spec:
   replicas: 3
@@ -483,7 +483,7 @@ spec:
       labels:
         ControllerComponentLabel: prometheus
         linkerd.io/control-plane-ns: Namespace
-        linkerd.io/proxy-deployment: prometheus
+        linkerd.io/proxy-deployment: prefix-prometheus
     spec:
       containers:
       - args:
@@ -578,14 +578,14 @@ spec:
       serviceAccount: linkerd-prometheus
       volumes:
       - configMap:
-          name: prometheus-config
+          name: prefix-prometheus-config
         name: prometheus-config
 status: {}
 ---
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: prometheus-config
+  name: prefix-prometheus-config
   namespace: Namespace
   labels:
     ControllerComponentLabel: prometheus
@@ -695,7 +695,7 @@ metadata:
   creationTimestamp: null
   labels:
     ControllerComponentLabel: grafana
-  name: grafana
+  name: prefix-grafana
   namespace: Namespace
 spec:
   replicas: 1
@@ -710,7 +710,7 @@ spec:
       labels:
         ControllerComponentLabel: grafana
         linkerd.io/control-plane-ns: Namespace
-        linkerd.io/proxy-deployment: grafana
+        linkerd.io/proxy-deployment: prefix-grafana
     spec:
       containers:
       - image: GrafanaImage
@@ -806,14 +806,14 @@ spec:
             path: provisioning/datasources/datasources.yaml
           - key: dashboards.yaml
             path: provisioning/dashboards/dashboards.yaml
-          name: grafana-config
+          name: prefix-grafana-config
         name: grafana-config
 status: {}
 ---
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: grafana-config
+  name: prefix-grafana-config
   namespace: Namespace
   labels:
     ControllerComponentLabel: grafana
@@ -924,7 +924,7 @@ metadata:
   creationTimestamp: null
   labels:
     ControllerComponentLabel: ca
-  name: ca
+  name: prefix-ca
   namespace: Namespace
 spec:
   replicas: 1
@@ -939,7 +939,7 @@ spec:
       labels:
         ControllerComponentLabel: ca
         linkerd.io/control-plane-ns: Namespace
-        linkerd.io/proxy-deployment: ca
+        linkerd.io/proxy-deployment: prefix-ca
     spec:
       containers:
       - args:

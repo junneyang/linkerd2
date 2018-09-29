@@ -35,6 +35,7 @@ type installConfig struct {
 	TLSTrustAnchorConfigMapName string
 	ProxyContainerName          string
 	SingleNamespace             bool
+	ResourcePrefix              string
 }
 
 type installOptions struct {
@@ -90,6 +91,12 @@ func validateAndBuildConfig(options *installOptions) (*installConfig, error) {
 	if err := validate(options); err != nil {
 		return nil, err
 	}
+
+	var resourcePrefix string
+	if options.singleNamespace {
+		resourcePrefix = "linkerd-"
+	}
+
 	return &installConfig{
 		Namespace:                   controlPlaneNamespace,
 		ControllerImage:             fmt.Sprintf("%s/controller:%s", options.dockerRegistry, options.linkerdVersion),
@@ -110,6 +117,7 @@ func validateAndBuildConfig(options *installOptions) (*installConfig, error) {
 		TLSTrustAnchorConfigMapName: k8s.TLSTrustAnchorConfigMapName,
 		ProxyContainerName:          k8s.ProxyContainerName,
 		SingleNamespace:             options.singleNamespace,
+		ResourcePrefix:              resourcePrefix,
 	}, nil
 }
 
@@ -138,6 +146,8 @@ func render(config installConfig, w io.Writer, options *installOptions) error {
 
 	// Special case for linkerd-proxy running in the Prometheus pod.
 	injectOptions.proxyOutboundCapacity[config.PrometheusImage] = prometheusProxyOutboundCapacity
+
+	injectOptions.controllerName = config.ResourcePrefix + "controller"
 
 	return InjectYAML(buf, w, ioutil.Discard, injectOptions)
 }

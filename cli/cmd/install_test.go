@@ -40,6 +40,7 @@ func TestRender(t *testing.T) {
 		TLSTrustAnchorConfigMapName: "TLSTrustAnchorConfigMapName",
 		ProxyContainerName:          "ProxyContainerName",
 		SingleNamespace:             true,
+		ResourcePrefix:              "prefix-",
 	}
 
 	testCases := []struct {

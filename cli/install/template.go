@@ -123,7 +123,7 @@ spec:
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: controller
+  name: {{.ResourcePrefix}}controller
   namespace: {{.Namespace}}
   labels:
     {{.ControllerComponentLabel}}: controller
@@ -261,7 +261,7 @@ spec:
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: web
+  name: {{.ResourcePrefix}}web
   namespace: {{.Namespace}}
   labels:
     {{.ControllerComponentLabel}}: web
@@ -327,7 +327,7 @@ spec:
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: prometheus
+  name: {{.ResourcePrefix}}prometheus
   namespace: {{.Namespace}}
   labels:
     {{.ControllerComponentLabel}}: prometheus
@@ -346,7 +346,7 @@ spec:
       volumes:
       - name: prometheus-config
         configMap:
-          name: prometheus-config
+          name: {{.ResourcePrefix}}prometheus-config
       containers:
       - name: prometheus
         ports:
@@ -378,7 +378,7 @@ spec:
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: prometheus-config
+  name: {{.ResourcePrefix}}prometheus-config
   namespace: {{.Namespace}}
   labels:
     {{.ControllerComponentLabel}}: prometheus
@@ -483,7 +483,7 @@ spec:
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: grafana
+  name: {{.ResourcePrefix}}grafana
   namespace: {{.Namespace}}
   labels:
     {{.ControllerComponentLabel}}: grafana
@@ -501,7 +501,7 @@ spec:
       volumes:
       - name: grafana-config
         configMap:
-          name: grafana-config
+          name: {{.ResourcePrefix}}grafana-config
           items:
           - key: grafana.ini
             path: grafana.ini
@@ -537,7 +537,7 @@ spec:
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: grafana-config
+  name: {{.ResourcePrefix}}grafana-config
   namespace: {{.Namespace}}
   labels:
     {{.ControllerComponentLabel}}: grafana
@@ -645,7 +645,7 @@ subjects:
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: ca
+  name: {{.ResourcePrefix}}ca
   namespace: {{.Namespace}}
   labels:
     {{.ControllerComponentLabel}}: ca
