@@ -4,6 +4,7 @@ import CallToAction from './CallToAction.jsx';
 import ErrorBanner from './ErrorBanner.jsx';
 import Grid from '@material-ui/core/Grid';
 import { incompleteMeshMessage } from './util/CopyUtils.jsx';
+import Stepper from './util/Stepper.jsx';
 import MeshedStatusTable from './MeshedStatusTable.jsx';
 import Metric from './Metric.jsx';
 import moment from 'moment';
@@ -265,6 +266,10 @@ class ServiceMesh extends React.Component {
               <CallToAction
                 numResources={_.size(this.state.nsStatuses)}
                 resource="namespace" /> : null}
+
+            <Stepper
+              numResources={_.size(this.state.nsStatuses)}
+              resource="namespace" />
 
             <Grid container spacing={24}>
               <Grid item xs={8}>{this.renderControlPlaneDetails()}</Grid>
